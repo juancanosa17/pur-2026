@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<title>Acceso restringido</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>🔒</text></svg>">
+<style>
+:root{
+  --bg:#0b0f16; --card:#111826; --line:#1f2937; --txt:#e6edf7; --txt2:#9fb0c8;
+  --muted:#6b7d96; --ac:#2dd4bf; --ac2:#99f6e4; --bad:#f87171; --ok:#4ade80;
+  --sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'Cascadia Mono','Consolas',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+#gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:radial-gradient(1100px 620px at 50% -10%,rgba(45,212,191,.12),transparent 62%),var(--bg);z-index:50}
+#gate.off{display:none}
+.card{width:100%;max-width:404px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:30px 28px 24px;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.lock{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:18px;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);font-size:21px}
+h1{margin:0 0 6px;font-size:19.5px;font-weight:700;letter-spacing:-.35px}
+.sub{margin:0 0 22px;font-size:13px;color:var(--txt2);line-height:1.55}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pwrow{position:relative}
+input[type=password],input[type=text]{width:100%;background:#0a0e15;border:1px solid var(--line);border-radius:10px;padding:12px 44px 12px 14px;color:var(--txt);
+  font-family:var(--mono);font-size:14.5px;letter-spacing:.5px;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(45,212,191,.16)}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--muted);cursor:pointer;padding:7px 9px;border-radius:7px;font-size:14px;line-height:1}
+.eye:hover{color:var(--txt2);background:rgba(255,255,255,.05)}
+button.go{width:100%;margin-top:14px;padding:12px;border:0;border-radius:10px;cursor:pointer;background:var(--ac);color:#04201c;font-family:var(--sans);font-size:14px;font-weight:750}
+button.go:hover:not(:disabled){filter:brightness(1.09)}
+button.go:disabled{opacity:.55;cursor:progress}
+.msg{margin-top:13px;font-size:12.6px;min-height:18px;line-height:1.5}
+.msg.err{color:var(--bad)} .msg.info{color:var(--muted)}
+.note{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);font-size:11.4px;color:var(--muted);line-height:1.65}
+.note b{color:var(--txt2);font-weight:650}
+.bar{height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:14px;display:none}
+.bar.on{display:block}
+.bar i{display:block;height:100%;width:35%;background:var(--ac);animation:sl 1.05s ease-in-out infinite}
+@keyframes sl{0%{transform:translateX(-100%)}100%{transform:translateX(330%)}}
+#app{display:none;flex-direction:column;height:100%}
+#app.on{display:flex}
+.top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,1fr);align-items:center;gap:12px;padding:0 14px;height:30px;flex:0 0 30px;
+  background:#080c12;border-bottom:1px solid var(--line);font-size:11.4px;color:var(--muted)}
+.top .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;color:var(--txt2)}
+.cuenta{justify-self:center;color:var(--txt2);white-space:nowrap}
+.cuenta b{color:var(--ac2)}
+.salir{justify-self:end;background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;font-size:11.4px}
+.salir:hover{color:var(--txt2)}
+#frame{flex:1;width:100%;border:0;background:#f6f7fa}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card">
+    <div class="lock">🔒</div>
+    <h1>Contenido cifrado</h1>
+    <p class="sub">Este sitio guarda sus documentos cifrados con AES&#8209;256&#8209;GCM. Ingresá la contraseña para descifrarlos en tu navegador.</p>
+    <label for="pw">Contraseña</label>
+    <div class="pwrow">
+      <input id="pw" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-form-type="other" data-1p-ignore>
+      <button class="eye" id="eye" type="button" title="Mostrar u ocultar" aria-label="Mostrar u ocultar la contraseña">👁</button>
+    </div>
+    <button class="go" id="go" type="button">Descifrar</button>
+    <div class="bar" id="bar"><i></i></div>
+    <div class="msg info" id="msg"></div>
+    <div class="note">La contraseña <b>no viaja a ningún servidor</b> y <b>no se guarda en ningún lado</b>: sólo deriva una clave que queda en este dispositivo —no se puede volver a leer, sólo usar para descifrar—. No hay recuperación posible.</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="top">
+    <span class="nm" id="docName">—</span>
+    <span class="cuenta" id="cuenta"></span>
+    <button class="salir" id="salir" type="button" title="Olvidar la sesión en este dispositivo">Cerrar sesión</button>
+  </div>
+  <iframe id="frame" title="Documento"></iframe>
+</div>
+
+<script>
+'use strict';
+(function(){
+
+/* Fecha de la prueba para la cuenta regresiva (AAAA-MM-DD). null = todavía no se publicó. */
+const FECHA_PUR = null;
+
+const $ = s => document.querySelector(s);
+const gate=$('#gate'), app=$('#app'), pw=$('#pw'), go=$('#go'), msg=$('#msg'), bar=$('#bar'), frame=$('#frame');
+let KEY = null, MANIFEST = null, actual = null;
+const CACHE = new Map();
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const dec = new TextDecoder();
+function say(t, cls){ msg.textContent = t; msg.className = 'msg ' + (cls||'info'); }
+function busy(on){ bar.classList.toggle('on', on); go.disabled = on; }
+
+async function derivar(pass, kdf){
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name:'PBKDF2', salt:b64(kdf.salt), iterations:kdf.iter, hash:kdf.hash },
+    base, { name:'AES-GCM', length:256 }, false, ['decrypt']);
+}
+async function abrirBlob(buf){
+  const u8 = new Uint8Array(buf);
+  return dec.decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:u8.slice(0,12)}, KEY, u8.slice(12)));
+}
+
+/* ---------- sesión recordada (clave no extraíble en IndexedDB) ---------- */
+const DB = 'pur-2026', TIENDA = 'sesion', LLAVE = 'k';
+function idb(modo, fn){
+  return new Promise((res, rej) => {
+    let r; try { r = indexedDB.open(DB, 1); } catch(e){ rej(e); return; }
+    r.onupgradeneeded = () => { r.result.createObjectStore(TIENDA); };
+    r.onerror = () => rej(r.error);
+    r.onsuccess = () => { const db = r.result; let p;
+      try { const tx = db.transaction(TIENDA, modo); p = fn(tx.objectStore(TIENDA));
+        tx.oncomplete = () => { db.close(); res(p && p.result); }; tx.onerror = () => { db.close(); rej(tx.error); };
+      } catch(e){ db.close(); rej(e); } };
+  });
+}
+async function recordarSesion(salt){ try{ await idb('readwrite', s => s.put({key:KEY, salt}, LLAVE)); }catch(e){} }
+async function sesionGuardada(){ try{ return await idb('readonly', s => s.get(LLAVE)); }catch(e){ return null; } }
+async function olvidarSesion(){ try{ await idb('readwrite', s => s.delete(LLAVE)); }catch(e){} }
+async function leerManifiesto(){
+  if(MANIFEST) return MANIFEST;
+  const r = await fetch('data/manifest.json', {cache:'no-store'});
+  if(!r.ok) throw new Error('No se pudo leer el manifiesto del sitio.');
+  return (MANIFEST = await r.json());
+}
+function docInicial(){
+  const h = decodeURIComponent(location.hash.slice(1) || '');
+  const [nombre, ancla] = h.split('#');
+  const d = MANIFEST.docs.find(x => x.href === nombre || x.id === nombre);
+  return d ? [d.id, ancla] : [MANIFEST.docs[0].id, null];
+}
+async function entrar(){
+  gate.classList.add('off'); app.classList.add('on');
+  const [id, ancla] = docInicial();
+  await mostrar(id, ancla);
+  cuenta();
+}
+async function reanudar(){
+  if(typeof indexedDB === 'undefined') return false;
+  const g = await sesionGuardada(); if(!g || !g.key) return false;
+  try{
+    await leerManifiesto();
+    if(g.salt !== MANIFEST.kdf.salt) throw new Error('el sitio se recifró');
+    KEY = g.key; await abrirBlob(b64(MANIFEST.verifier).buffer);
+  }catch(e){ KEY = null; await olvidarSesion(); return false; }
+  await entrar(); return true;
+}
+async function desbloquear(){
+  const pass = pw.value;
+  if(!pass){ say('Escribí la contraseña.', 'err'); pw.focus(); return; }
+  busy(true); say('Derivando la clave…');
+  try{
+    await leerManifiesto();
+    KEY = await derivar(pass, MANIFEST.kdf);
+    await abrirBlob(b64(MANIFEST.verifier).buffer);
+  }catch(e){
+    KEY = null; busy(false);
+    say(e && e.message && !/operation-specific|decrypt/i.test(e.message) ? e.message : 'Contraseña incorrecta.', 'err');
+    pw.select(); return;
+  }
+  pw.value = '';
+  await recordarSesion(MANIFEST.kdf.salt);
+  busy(false); say('');
+  await entrar();
+}
+
+/* ---------- visor ---------- */
+async function cargar(id){
+  if(CACHE.has(id)) return CACHE.get(id);
+  const d = MANIFEST.docs.find(x => x.id === id);
+  const r = await fetch('data/' + d.file, {cache:'no-store'});
+  const html = await abrirBlob(await r.arrayBuffer());
+  CACHE.set(id, html); return html;
+}
+let anclaPendiente = null;
+async function mostrar(id, ancla){
+  const d = MANIFEST.docs.find(x => x.id === id); if(!d) return;
+  if(id === actual){ if(ancla) irAlAncla(frame.contentDocument, ancla); return; }
+  actual = id; anclaPendiente = ancla || null;
+  $('#docName').textContent = d.title; document.title = d.title;
+  history.replaceState(null, '', '#' + encodeURIComponent(d.href) + (ancla ? '#' + ancla : ''));
+  frame.srcdoc = await cargar(id);
+}
+function irAlAncla(d, id){
+  try { id = decodeURIComponent(id); } catch(e){}
+  if(!id || !d) return;
+  const w = d.defaultView;
+  if(w && typeof w.goTo === 'function'){ w.goTo(id); return; }
+  const t = d.getElementById(id); if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function resolver(href){
+  let [nombre, ancla] = href.split('#');
+  nombre = nombre.replace(/^\.\//, '');
+  try { nombre = decodeURIComponent(nombre); } catch(e){}
+  return [MANIFEST.docs.find(x => x.href === nombre), ancla || null];
+}
+frame.addEventListener('load', () => {
+  let d; try { d = frame.contentDocument; } catch(e){ return; }
+  if(!d) return;
+  if(anclaPendiente){ const a = anclaPendiente; anclaPendiente = null; setTimeout(() => irAlAncla(d, a), 80); }
+  d.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]'); if(!a) return;
+    const h = a.getAttribute('href') || ''; if(!h) return;
+    /* un srcdoc conserva como base la URL del visor: las anclas se recorren a mano */
+    if(h.charAt(0) === '#'){ e.preventDefault(); irAlAncla(d, h.slice(1)); return; }
+    if(/^[a-z][a-z0-9+.-]*:/i.test(h)){ if(!a.target){ a.target = '_blank'; a.rel = 'noopener'; } return; }
+    e.preventDefault();
+    const [destino, ancla] = resolver(h);
+    if(destino) mostrar(destino.id, ancla);
+  }, true);
+});
+
+/* ---------- API para los documentos: búsqueda en todo el sitio ---------- */
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+let INDICE = null;
+async function indice(){
+  if(INDICE) return INDICE;
+  const out = [];
+  for(const d of MANIFEST.docs){
+    const html = await cargar(d.id);
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const corto = (doc.querySelector('.areas a.on') || {}).textContent || d.title;
+    const color = ((doc.querySelector('.areas a.on') || {getAttribute(){return '';}}).getAttribute('style') || '').replace('--ca:','');
+    doc.querySelectorAll('.sub').forEach(sub => {
+      if(/-q$/.test(sub.id)) return;
+      const ch = sub.closest('.chap'); const h = sub.querySelector('h3');
+      const t = (h ? h.textContent : '').trim();
+      const body = sub.textContent.replace(/\s+/g, ' ');
+      out.push({ href:d.href, id:sub.id, t, c: ch ? ch.dataset.title : '', corto: corto.trim(), color, body,
+                 nt:norm(t), nh:norm(t + ' ' + (ch ? ch.dataset.title : '') + ' ' + body) });
+    });
+  }
+  return (INDICE = out);
+}
+window.PUR = {
+  async buscar(q, desde){
+    q = norm(String(q).trim()); if(q.length < 2) return [];
+    const terms = q.split(/\s+/);
+    return (await indice()).filter(it => it.href !== desde && terms.every(t => it.nh.includes(t))).map(it => {
+      let score = 0, snip = '';
+      terms.forEach(t => { if(it.nt.includes(t)) score += 12; const p = it.nh.indexOf(t);
+        if(p >= 0){ score += 3 + Math.min(5, it.nh.split(t).length - 1); if(!snip){ snip = it.body.substr(Math.max(0, p - 70), 190); } } });
+      return { href:it.href, id:it.id, t:it.t, c:it.c, corto:it.corto, color:it.color, snip, score };
+    }).sort((a, b) => b.score - a.score).slice(0, 20);
+  },
+  ir(href, id){ const [d] = resolver(href); if(d) mostrar(d.id, id); }
+};
+
+/* ---------- cuenta regresiva ---------- */
+function cuenta(){
+  const el = $('#cuenta');
+  if(!FECHA_PUR){ el.textContent = 'PUR 2026 · fecha a confirmar'; return; }
+  const dias = Math.ceil((new Date(FECHA_PUR + 'T08:00:00') - new Date()) / 864e5);
+  el.innerHTML = dias > 0 ? 'PUR 2026 · faltan <b>' + dias + '</b> días' : dias === 0 ? '<b>PUR 2026 es hoy</b>' : 'PUR 2026';
+}
+
+go.addEventListener('click', desbloquear);
+pw.addEventListener('keydown', e => { if(e.key === 'Enter') desbloquear(); });
+$('#eye').addEventListener('click', () => { pw.type = pw.type === 'password' ? 'text' : 'password'; pw.focus(); });
+$('#salir').addEventListener('click', async () => { await olvidarSesion(); location.hash = ''; location.reload(); });
+
+if(!crypto || !crypto.subtle){
+  say('Este navegador no expone Web Crypto. Hace falta HTTPS y un navegador moderno.', 'err'); go.disabled = true;
+} else {
+  say('Buscando una sesión abierta…');
+  reanudar().then(ok => { if(!ok){ say(''); pw.focus(); } });
+}
+})();
+</script>
+</body>
+</html>

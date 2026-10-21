@@ -1,0 +1,60 @@
+{
+  "v": 1,
+  "kdf": {
+    "name": "PBKDF2",
+    "hash": "SHA-256",
+    "iter": 310000,
+    "salt": "jdXdbIL8Riymau99nHueAQ=="
+  },
+  "verifier": "oyvwO3g/guoqA53lowACj8s83+bbO61cal8h+ryyuV1A7MNq",
+  "docs": [
+    {
+      "id": "panel",
+      "title": "PUR 2026 · Panel",
+      "href": "PUR 2026.html",
+      "file": "d0.bin"
+    },
+    {
+      "id": "mfyc",
+      "title": "Medicina Familiar y Comunitaria",
+      "href": "Medicina Familiar.html",
+      "file": "d1.bin"
+    },
+    {
+      "id": "mi",
+      "title": "Medicina Interna",
+      "href": "Medicina Interna.html",
+      "file": "d2.bin"
+    },
+    {
+      "id": "gin",
+      "title": "Ginecotocología",
+      "href": "Ginecotocologia.html",
+      "file": "d3.bin"
+    },
+    {
+      "id": "cir",
+      "title": "Cirugía",
+      "href": "Cirugia.html",
+      "file": "d4.bin"
+    },
+    {
+      "id": "ped",
+      "title": "Pediatría",
+      "href": "Pediatria.html",
+      "file": "d5.bin"
+    },
+    {
+      "id": "psi",
+      "title": "Psiquiatría",
+      "href": "Psiquiatria.html",
+      "file": "d6.bin"
+    },
+    {
+      "id": "leg",
+      "title": "Medicina Legal y Bioética",
+      "href": "Medicina Legal y Bioetica.html",
+      "file": "d7.bin"
+    }
+  ]
+}
